@@ -24,7 +24,10 @@ rm -rf "$build_dir"
 mkdir -p "$build_dir"
 cp "$CDIR/pluginrc.zsh" "$build_dir/"
 
-readonly portable_url="https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz"
+# fzf tags are prefixed with "v" since version 0.54.0.
+# (https://github.com/junegunn/fzf/releases/tag/v0.54.0)
+# The assets do not contain "v" though.
+readonly portable_url="https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION#v}-linux_amd64.tar.gz"
 tarname=$(basename "$portable_url")
 readonly tarname
 
