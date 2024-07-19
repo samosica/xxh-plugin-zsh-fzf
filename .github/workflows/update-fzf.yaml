@@ -16,7 +16,7 @@ jobs:
           CURRENT_VERSION=$(cat fzf-version)
           LATEST_VERSION=$(
             curl -s "https://api.github.com/repos/junegunn/fzf/releases/latest" | \
-            jq -r .tag_name
+            jq --exit-status -r .tag_name
           )
           if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
             echo "$LATEST_VERSION" >fzf-version
@@ -27,7 +27,7 @@ jobs:
             git add fzf-version
             git commit -m "Update fzf to ${LATEST_VERSION}"
             git push origin "$BRANCH"
-            gh pr create --base main --head "$BRANCH" --title "Update fzf to ${LATEST_VERSION}" --body ""
+            gh pr create --base master --head "$BRANCH" --title "Update fzf to ${LATEST_VERSION}" --body ""
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
