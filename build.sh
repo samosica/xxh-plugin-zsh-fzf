@@ -2,6 +2,8 @@
 
 CDIR="$(cd "$(dirname "$0")" && pwd)"
 build_dir=$CDIR/build
+FZF_VERSION=$(cat fzf-version)
+readonly FZF_VERSION
 
 while getopts A:K:q option
 do
@@ -21,7 +23,7 @@ do
     cp $CDIR/$f $build_dir/
 done
 
-portable_url='https://github.com/junegunn/fzf/releases/download/0.42.0/fzf-0.42.0-linux_amd64.tar.gz'
+portable_url="https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz"
 tarname=`basename $portable_url`
 
 cd $build_dir
