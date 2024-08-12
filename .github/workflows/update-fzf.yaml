@@ -18,16 +18,18 @@ jobs:
             curl -s "https://api.github.com/repos/junegunn/fzf/releases/latest" | \
             jq --exit-status -r .tag_name
           )
-          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+          BRANCH_PREFIX='update-fzf-'
+          BRANCH="${BRANCH_PREFIX}${LATEST_VERSION}"
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ] && ! gh pr view "$BRANCH" >/dev/null 2>&1; then
             echo "$LATEST_VERSION" >fzf-version
             git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git config --global user.name "github-actions[bot]"
-            BRANCH="update-fzf-${{ github.run_number }}"
             git checkout -b "$BRANCH"
             git add fzf-version
             git commit -m "Update fzf to ${LATEST_VERSION}"
             git push origin "$BRANCH"
             gh pr create --base master --head "$BRANCH" --title "Update fzf to ${LATEST_VERSION}" --body ""
+            scripts/close-outdated-prs.sh -p "$BRANCH_PREFIX" "$LATEST_VERSION"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
