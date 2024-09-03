@@ -28,7 +28,19 @@ jobs:
             git add fzf-version
             git commit -m "Update fzf to ${LATEST_VERSION}"
             git push origin "$BRANCH"
-            gh pr create --base master --head "$BRANCH" --title "Update fzf to ${LATEST_VERSION}" --body ""
+            html_url=$(
+              curl -s "https://api.github.com/repos/junegunn/fzf/releases/latest" | \
+              jq --exit-status -r .html_url
+            )
+            body=$(cat <<END
+          This PR updates fzf from ${CURRENT_VERSION} to ${LATEST_VERSION}.
+
+          ## Reference:
+
+          - <${html_url}>
+          END
+            )
+            gh pr create --base master --head "$BRANCH" --title "Update fzf to ${LATEST_VERSION}" --body "$body"
             scripts/close-outdated-prs.sh -p "$BRANCH_PREFIX" "$LATEST_VERSION"
           fi
         env:
